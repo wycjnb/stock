@@ -1,6 +1,7 @@
 from base.app_base import BaseAppServer
 from urllib import request
 from functools import reduce
+import json
 
 class server1(object):
     _ins = None
@@ -56,14 +57,31 @@ class server1(object):
         return result
 
     def addstockinform(self, body):
-        self.db.insertOne('insert into stock_idlist (stid) value(%s)', [body])
+        data = json.loads(body.decode())
+        panel_id = data['panel_id']
+        stock_id = data['stock_id']
+        self.db.insertOne('insert into stock_idlist (stid,panel_id) value(%s,%s)', [stock_id, panel_id])
         self.init()
 
     def delstockinform(self, body):
-        self.db.delete('DELETE FROM stock_idlist WHERE stid=%s', [body])
+        data = json.loads(body.decode())
+        panel_id = data['panel_id']
+        stock_id = data['stock_id']
+        self.db.delete('DELETE FROM stock_idlist WHERE stid=%s and panel_id=%s', [stock_id, panel_id])
         self.init()
 
     def get_panel(self):
         panels_list = self.db.getAll('Select * from panel_id')
         panel = [{'name': panel_list['name'].decode(), 'panel_id': panel_list['panel_id']}for panel_list in panels_list]
         return panel
+
+    def add_panel(self, body):
+        data = json.loads(body.decode())
+        panel_name = data['panel_name']
+        self.db.insertOne('insert into panel_id (name) value(%s)', [panel_name])
+
+    def del_panel(self, body):
+        data = json.loads(body.decode())
+        panel_id = data['panel_id']
+        self.db.delete('DELETE FROM stock_idlist WHERE panel_id=%s', [panel_id])
+        self.db.delete('DELETE FROM panel_id WHERE panel_id=%s', [panel_id])

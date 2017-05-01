@@ -37,3 +37,13 @@ class GetPanel(Resource):
     def get(self):
         result = server1.instance().get_panel()
         return result
+
+class AddPanel(Resource):
+    def post(self):
+        body = reqparse.request.get_data()
+        server1.instance().add_panel(body)
+
+class DelPanel(Resource):
+    def post(self):
+        body = reqparse.request.get_data()
+        server1.instance().del_panel(body)

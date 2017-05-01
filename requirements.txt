@@ -1,0 +1,6 @@
+flask==0.11.1
+flask_restful
+mysql-connector-python-rf
+Mysqlclient
+DBUtils
+gevent

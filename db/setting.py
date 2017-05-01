@@ -1,0 +1,6 @@
+import os
+LAE_JDBC_HOST = os.environ['DB_PORT_3306_TCP_ADDR']
+LAE_JDBC_PORT = int(os.environ['DB_PORT_3306_TCP_PORT'])
+LAE_JDBC_USER = os.environ['DB_ENV_MYSQL_USER']
+LAE_JDBC_PASSWD = os.environ['DB_ENV_MYSQL_PASSWORD']
+LAE_JDBC_DEFAULT_DB = 'stock'

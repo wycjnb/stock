@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="http://ajax.microsoft.com/ajax/jquery/jquery-3.2.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
@@ -11,34 +12,89 @@
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 
-    <script src="http://ajax.microsoft.com/ajax/jquery/jquery-3.2.1.min.js"></script>
+
     <title>stock</title>
 
     <script>
-        function addstock() {
-//            $.ajax({
-//                url: "/test3",
-//                type: 'POST',
-//                contentType: 'text/plain',
-//                data: {'panel_id':$('[name=xxxxx]').attr('key-data')},
-//                beforeSend:function(){
-//                    let stid = document.getElementById('xxxxx').value,
-//                        stidtest = /\d{6}/
-//                    if (!stidtest.test(stid))
-//                    {alert('mdzz');
-//                    return false}
-//                }
-//            });
-            alert($(this).serialize())
-//            var a = $('[name=xxxxx]').attr('key-data')
-//            alert(a)
-//            alert($('[name=xxxxx]').val())
-        }
+        $(document).ready(function () {
+        $('body').on('submit','.add_stock',function () {
+            let adddatas = $(this).serialize();
+            let adddata = adddatas.split('=');
+            let stock_id = adddata[1];
+            let panel_id = adddata[0];
+            $.ajax({
+              url: "/addstock",
+               type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({'panel_id':panel_id,'stock_id':stock_id}),
+                beforeSend:function(){
+                       stidtest = /\d{6}/
+                   if (!stidtest.test(stock_id))
+                   {alert('mdzz');
+                   return false}
+                }
+           });
+        })})</script>
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', "li .delete", function () {
+                let $el = $(this);
+                let stock_id = $el.attr('data-key');
+                let panel_id = $el.attr('panel_id');
+                $(`#${panel_id} [name=${stock_id}]`).remove();
+                $.ajax({
+                    url: "/deletestock",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({'panel_id':panel_id, 'stock_id':stock_id})
+                })
+            })
+        })
 
     </script>
+    <script>
+        function addpanel()
+          {
+          var t=prompt("请输入板块名称")
+          if (t!=null && t!="")
+            {
+            $.ajax({
+                url: "/addpanel",
+                dataType: 'json',
+                type: 'POST',
+                contentType: 'application/json',
+                data:JSON.stringify({'panel_name':t})
+                });
+                window.location.reload();
+            }
 
+          }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', ".panel-heading .delete", function (){
+                let $el = $(this);
+                let panel_id = $el.attr('panel_id');
+                let se=confirm("确定删除本版块?");
+                if (se==true)
+                  {
+                      $(`[panel=${panel_id}]`).remove();
+                      $.ajax({
+                        url: "/delpanel",
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({'panel_id':panel_id})
+                })
+                  }
+
+            })
+        })
+
+    </script>
 </head>
 <body>
+    <div><button onclick="addpanel()" class="btn btn-sm btn-primary">增加板块</button></div>
+
     <script>
         $.ajax({
         url: "/getpanel",
@@ -51,9 +107,12 @@
         function addul(data) {
             let ul = $('body')
             for (let i in data){
-                        ul.append(`<div class="col-md-6">
+                        ul.append(`<div class="col-md-6" panel=${data[i]['panel_id']}>
                         <div class="panel panel-primary">
-                            <div class="panel-heading">${data[i]['name']}</div>
+                            <div class="panel-heading">
+                            <span>${data[i]['name']}</span>
+                            <span class='delete' panel_id=${data[i]['panel_id']} style="position: absolute;left: 800px">删除</span>
+                            </div>
                             <ul class='stocks' id=${data[i]['panel_id']}>
                                 <li >
                                     <span class="badge" style="text-align: center; width: 100px; display: inline-block;"> 股票名 </span>
@@ -75,9 +134,6 @@
         }
 
     </script>
-
-
-
 
 
 
@@ -106,7 +162,7 @@
                         <span class='stockchange' style="text-align: center; width: 100px; display: inline-block;"></span>
                         <span class='stockvolum' style="text-align: center; width: 100px; display: inline-block;"></span>
                         <span class='stockrate' style="text-align: center; width: 100px; display: inline-block;"></span>
-                        <span class='delete' data-key=${data[i]['list'][j]} style="text-align: center; width: 100px; display: inline-block;">删除</span>
+                        <span class='delete' panel_id=${data[i]['panel_id']} data-key=${data[i]['list'][j]} style="text-align: center; width: 100px; display: inline-block;">删除</span>
                         </li>`);
                 }
 
@@ -117,20 +173,19 @@
 
     <script>
         $(document).ready(function () {
-//            setInterval(runajax1,5000)
-//            function runajax1() {
-                            $.ajax({
-            url: "/getstockinform",
-            dataType: 'json',
-            data: '',
-            timeout: 3000,
+            setInterval(runajax1,2000);
+            function runajax1() {
+            $.ajax({
+                url: "/getstockinform",
+                dataType: 'json',
+                data: '',
+                timeout: 2000,
 
-            success:function(data) {
-                refreshPrice(data)
-            }
-        });
-//            }
-
+                success: function (data) {
+                    refreshPrice(data)
+                }
+            });
+        }
 
             function refreshPrice(data){
                 let ul;
@@ -141,11 +196,14 @@
                         ul.find('.stockname').text(`${data[i]['list'][j]['a']}`);
                         ul.find('.stockid').text(`${data[i]['list'][j]['b']}`);
                         ul.find('.stockprice').text(`${data[i]['list'][j]['c']}`);
-                        if (data[i]['list'][j]['d']<0) {
-                            ul.find('.stockchange').text(`${data[i]['list'][j]['d']}%`)
-                        }else{
-                            ul.find('.stockchange').text(`${data[i]['list'][j]['d']}%`)
+                        if (data[i]['list'][j]['d']<0){
+                        ul.find('.stockchange').text(`${data[i]['list'][j]['d']}%`);
+                        ul.find('.stockchange').css('color', 'green');}
+                        else{
+                            ul.find('.stockchange').text(`${data[i]['list'][j]['d']}%`);
+                            ul.find('.stockchange').css('color', 'red');
                         }
+
                         ul.find('.stockvolum').text(`${data[i]['list'][j]['e']}`);
                         ul.find('.stockrate').text(`${data[i]['list'][j]['f']}`);
 
@@ -153,7 +211,6 @@
 
 
                 }
-
 
              }
         })
