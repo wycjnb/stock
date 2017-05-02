@@ -47,3 +47,11 @@ class DelPanel(Resource):
     def post(self):
         body = reqparse.request.get_data()
         server1.instance().del_panel(body)
+
+class Suggest(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('q', type=str)
+        args = parser.parse_args()
+        result = server1.instance().suggest(args)
+        return result

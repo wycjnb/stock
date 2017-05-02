@@ -1,11 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>test</title>
+    <script src="http://ajax.microsoft.com/ajax/jquery/jquery-3.2.1.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+        $('body').on('keyup','.add_stock',function () {
+			$.ajax({
+                url: "/suggest",
+                method:'get',
+                dataType : "json",
+                data:{ "q":$('input').val()},
+                success : function(data){
+                    let layer;
+                    layer ='<table>';
+                    for (let i in data){
+                        layer += `<tr><td>${data[i]['stock_id']}</td><td>${data[i]['stock_name']}</td><td>${data[i]['stock_title']}</td></tr>`
+                    }
+                    layer +='</table>';
+                    $('.search').empty();
+                    $('.search').append(layer)
+                    },
+                 error:function(){
+                      alert(2222222)
+           }
+        });
+
+        })
+        })
+    </script>
 
 </head>
 <body>
-<p>hello</p>
+    <form class="add_stock">
+        股票代码:<input type="text">
+        <table class=search></table>
+        <button type="submit" class="btn btn-sm btn-primary">添加股票</button>
 
+    </form>
 </body>
+    <style>
+		.add_stock{width: 302px;}
+		.search{width: 172px;position: fixed;z-index:1;overflow:hidden;
+			background:#fdffff;border: black 1px solid;border-top: none;left:75px}
+		.line{font-size: 12px;color:#000000;background: #f9fbff;width:302px;padding: 2px;}
+		.hover{background: #ffe3fd;color: aqua;}
+    </style>
 </html>

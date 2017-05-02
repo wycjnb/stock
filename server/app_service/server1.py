@@ -1,5 +1,6 @@
+# -*- coding:utf-8 -*-
 from base.app_base import BaseAppServer
-from urllib import request
+from urllib import request,parse
 from functools import reduce
 import json
 
@@ -85,3 +86,16 @@ class server1(object):
         panel_id = data['panel_id']
         self.db.delete('DELETE FROM stock_idlist WHERE panel_id=%s', [panel_id])
         self.db.delete('DELETE FROM panel_id WHERE panel_id=%s', [panel_id])
+
+    def suggest(self, args):
+        url = 'http://smartbox.gtimg.cn/s3/'
+        case = {'q': args['q'], 't': 'all', 'v':2}
+        opener = request.build_opener()
+        req = request.Request(url+'?'+parse.urlencode(case))
+        datas = opener.open(req).read().decode('unicode-escape')
+        datas = datas.split('=')[1].split('^')
+        result = []
+        for data in datas:
+            data_split = data.split('~')
+            result.append({'stock_id': data_split[1], 'stock_name': data_split[2], 'stock_title': data_split[3]})
+        return result

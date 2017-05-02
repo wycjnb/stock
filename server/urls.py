@@ -15,3 +15,5 @@ def add_resource(api):
     api.add_resource(server.handlers.task.AddPanel, '/addpanel')
 
     api.add_resource(server.handlers.task.DelPanel, '/delpanel')
+
+    api.add_resource(server.handlers.task.Suggest, '/suggest')
