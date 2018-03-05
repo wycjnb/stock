@@ -9,12 +9,12 @@ from server import urls
 app = Flask(__name__)
 api = Api(app)
 
-
-
+app.jinja_env.variable_start_string = '[[ '
+app.jinja_env.variable_start_string = ']] '
 
 @app.route('/')
 def test():
-    return render_template('tests.html')
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

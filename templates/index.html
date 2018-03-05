@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="http://ajax.microsoft.com/ajax/jquery/jquery-3.2.1.min.js"></script>
 <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
@@ -11,165 +13,252 @@
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 
-<script src="http://ajax.microsoft.com/ajax/jquery/jquery-3.2.1.min.js">
-</script>
-
-<script>
-    function refreshPrice(data) {
-        $('#test-jsonp').text('当前价格：' +
-            data['0000001'].name + '：' +
-            data['0000001'].price + '；' +
-            data['1399001'].name + '：' +
-            data['1399001'].price)
-    }
-</script>
-
-<script>
-    function refreshPrice1(data) {
-        let ul;
-        let a;
-        for (let i in data){
-            let add_colour
-            a = data[i]['b'];
-            ul = $(`#${a}`);
-//            if (data[i]['d']<0) {
-//                add_colour = `<span id='stockchange' style="text-align: center; width: 100px; display: inline-block; color: green">${data[i]['d']}%</span>`
-//            }else{
-//                add_colour = `<span id='stockchange' style="text-align: center; width: 100px; display: inline-block; color: red">${data[i]['d']}%</span>`
-//            }
-//            ul.html(`<li id=${a}><span id='stockname' style="text-align: center; width: 100px; display: inline-block;">${data[i]['a']}</span>
-//                        <span id='stockid' style="text-align: center; width: 100px; display: inline-block;">${data[i]['b']}</span>
-//                        <span id='stockprice' style="text-align: center; width: 100px; display: inline-block;">${data[i]['c']}</span>
-//                        ${add_colour}
-//                        <span id='stockvolum' style="text-align: center; width: 100px; display: inline-block;">${data[i]['e']}</span>
-//                        <span id='stockrate' style="text-align: center; width: 100px; display: inline-block;">${data[i]['f']}</span>
-//                        </li>`)
-            ul.find('#stockname').html(`<span id='stockname' style="text-align: center; width: 100px; display: inline-block;">${data[i]['a']}</span>`);
-            ul.find('#stockid').html(`<span id='stockid' style="text-align: center; width: 100px; display: inline-block;">${data[i]['b']}</span>`);
-            ul.find('#stockprice').html(`<span id='stockprice' style="text-align: center; width: 100px; display: inline-block;">${data[i]['c']}</span>`);
-            if (data[i]['d']<0) {
-                ul.find('#stockchange').html(`<span id='stockchange' style="text-align: center; width: 100px; display: inline-block; color: green">${data[i]['d']}%</span>`)
-            }else{
-                ul.find('#stockchange').html(`<span id='stockchange' style="text-align: center; width: 100px; display: inline-block; color: red">${data[i]['d']}%</span>`)
-            }
-            ul.find('#stockvolum').html(`<span id='stockvolum' style="text-align: center; width: 100px; display: inline-block;">${data[i]['e']}</span>`);
-            ul.find('#stockrate').html(`<span id='stockrate' style="text-align: center; width: 100px; display: inline-block;">${data[i]['f']}</span>`);
-        }
-    }
-</script>
-
-
-
-
-<script>
-    setInterval(runajax1,1000);
-//    getid();
-    function runajax1() {
-            $.ajax({
-            url: "/test",
-            dataType: 'json',
-            data: '',
-            timeout: 3000,
-
-            success:function(data){
-                refreshPrice1(data)
-            }
-        });
-    }
-</script>
-
-<script>
-function addstock() {
-        $.ajax({
-        url: "/test3",
-        type: 'POST',
-        contentType: 'text/plain',
-        data: document.getElementById('xxxxx').value,
-        beforeSend:function(){
-            let stid = document.getElementById('xxxxx').value,
-                stidtest = /\d{6}/
-            if (!stidtest.test(stid))
-            {alert('mdzz');
-            return false}
-        }
-//        headers:{"Content-type": "text/plain"}
-//
-//        success:function(data){
-//            refreshPrice1(data)
-//        }
-        });
-}
-</script>
-
-<script>
-    $.ajax({
-        url: "/test1",
-        dataType: 'json',
-        data: '',
-        timeout: 3000,
-        success:function(data){
-                adddata(data)}
-    });
-    function adddata(data) {
-        let ul = $('.stocks');
-    for (let i in data['a']) {
-        ul.append(`<li id=${data['a'][i]}><span id='stockname' style="text-align: center; width: 100px; display: inline-block;"></span>
-                    <span id='stockid' style="text-align: center; width: 100px; display: inline-block;">${data['a'][i]}</span>
-                    <span id='stockprice' style="text-align: center; width: 100px; display: inline-block;"></span>
-                    <span id='stockchange' style="text-align: center; width: 100px; display: inline-block;"></span>
-                    <span id='stockvolum' style="text-align: center; width: 100px; display: inline-block;"></span>
-                    <span id='stockrate' style="text-align: center; width: 100px; display: inline-block;"></span>
-                    <span class='delete' data-key=${data['a'][i]} style="text-align: center; width: 100px; display: inline-block;">删除</span>
-                    </li>`);}
-    }
-
-
-</script>
-
-
 </head>
 <body>
-<div class="col-md-6">
-    <div class="panel panel-primary">
-    <div class="panel-heading">面板标题</div>
-    <ul class='stocks'>
-    <li id='title'>
-        <span class="badge" style="text-align: center; width: 100px; display: inline-block;"> 股票名 </span>
-        <span class="badge" style="text-align: center; width: 100px; display: inline-block;"> 股票代码 </span>
-        <span class="badge" style="text-align: center; width: 100px; display: inline-block;"> 当前价 </span>
-        <span class="badge" style="text-align: center; width: 100px; display: inline-block;"> 涨跌幅 </span>
-        <span class="badge" style="text-align: center; width: 100px; display: inline-block;"> 成交量(手数) </span>
-        <span class="badge" style="text-align: center; width: 100px; display: inline-block;"> 换手率 </span>
-    </li>
-</ul>
-<form id="test-form" onsubmit="return addstock()">
-    股票代码:<input type="text" id="xxxxx" name="xxxxx">
-    <button type="submit" class="btn btn-sm btn-primary">Submit</button>
-</form>
+{#    <div id="panel" >#}
+{#        <ul id="example">#}
+{#            <li v-for="item in items">#}
+{#                {{ item.stock_name }} {{ item.stock_id }}#}
+{#            </li>#}
+{#        </ul>#}
+{#    </div>#}
+<script type="x/template" id="modal-template">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <span> {{ todos.name }}</span>
+                <button v-on:click="delete11"></button>
+            </div>
+            <ul>
+                <li>
+                    <span class="badge"> 股票名 </span>
+                    <span class="badge"> 股票代码 </span>
+                    <span class="badge"> 当前价 </span>
+                    <span class="badge"> 涨跌幅 </span>
+                    <span class="badge"> 成交量(手数) </span>
+                    <span class="badge"> 换手率 </span>
+                </li>
+                <test2 v-for="stock in stocks" v-if="stock.panel_id===todos.panel_id" v-bind:todos1="stock"></test2>
+            </ul>
+        </div>
     </div>
-</div>
+</script>
 
-<script>
-        $('.stocks').on('click',"li .delete",function () {
-        let $el = $(this);
-        console.log($el);
-        let key = $el.attr('data-key');
-        console.log(key);
-        $(`#${key}`).remove();
-        $.ajax({
-            url: "/test4",
-            type: 'POST',
-            contentType: 'text/plain',
-            data: key,
-            })
-         });
+<script type="x/template" id="modal-template1">
+    <div>
+        <li v-for="todos2 in todos1.list">
+            <span>{{ todos2.a }}</span>
+            <span>{{ todos2.b }}</span>
+            <span>{{ todos2.c }}</span>
+            <span>{{ todos2.d }}</span>
+            <span>{{ todos2.e }}</span>
+            <span>{{ todos2.f }}</span>
+        </li>
+    </div>
+</script>
+
+<script type="text/x-template" id="modal-template2">
+  <transition name="modal">
+    <div class="modal-mask">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+
+          <div class="modal-header">
+            <slot name="header">
+              default header
+            </slot>
+          </div>
+
+          <div class="modal-body">
+            <slot name="body">
+              default body
+            </slot>
+          </div>
+
+          <div class="modal-footer">
+            <slot name="footer">
+              default footer
+              <button class="btn btn-sm btn-primary"> 取消</button>
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
 </script>
 
 
 
-<!--<img src="../static/timg.jpg">-->
 
-
+<div id="app-7">
+    <test11 v-for="panel in panels" v-bind:todos="panel" v-on:delete11>
+    </test11>
+    <modal  v-if="showModal">
+       <h3 slot="header">提示</h3>
+        <p slot="body">确定要删除吗</p>
+        <button slot="footer" class="btn btn-sm btn-primary" @click.native="delete12"> 确定</button>
+        <button slot="footer" class="btn btn-sm btn-primary" @click.native="cancel12"> 取消</button>
+    </modal>
+</div>
 
 </body>
+<script>
+
+    function getstock(){
+                 $.ajax({
+              url: "/getstockinform",
+              method: 'get',
+              dataType: "json",
+              success: function (aa) {
+                  console.log(aa);
+                  this.stocks = aa
+              }.bind(this)
+          });
+    }
+
+
+    Vue.component('test11',{
+        props:['todos'],
+        template: '#modal-template',
+    data: function () {
+             $.ajax({
+              url: "/getstockinform",
+              method: 'get',
+              dataType: "json",
+              success: function (aa) {
+                  this.stocks = aa
+              }.bind(this)
+          });
+    return {'stocks':this.stocks}},
+              methods: {
+        delete11: function () {
+            this.$parent.showModal = true;
+//           let se=confirm("确定删除本版块?");
+//            console.log(this.todos.panel_id);
+//            console.log(this.$parent);
+//           console.log(this);
+//            let inde = -1;
+//            for(item of this.$parent.panels){
+//               inde = inde + 1;
+//              if(item.panel_id==this.todos.panel_id){
+//                   break;
+//              }
+//           }
+//           if (se==true){
+//               this.$parent.panels.splice(inde,1)
+//            }
+
+        }
+      }
+
+    });
+    Vue.component('test2',{
+        props:['todos1'],
+        template: '#modal-template1'
+    });
+
+    Vue.component('modal', {
+    template: '#modal-template2',
+    method:{
+        delete12:function () {
+            alert(11111)
+        }
+    }
+
+    });
+
+
+
+
+    var app7 = new Vue({
+      el: '#app-7',
+      data: {
+        panels: [
+        ],
+        stocks:[],
+        showModal: false,
+        ifdelete: false
+
+      },
+      created:function() {
+          $.ajax({
+
+              url: "/getpanel",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  console.log(data);
+                  this.panels = data;
+              }.bind(this)
+          })
+      },
+    });
+</script>
+
+<style>
+    .modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: table;
+  transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 300px;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  transition: all .3s ease;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.modal-header h3 {
+  margin-top: 0;
+  color: #42b983;
+}
+
+.modal-body {
+  margin: 20px 0;
+}
+
+.modal-default-button {
+  float: right;
+}
+
+/*
+ * The following styles are auto-applied to elements with
+ * transition="modal" when their visibility is toggled
+ * by Vue.js.
+ *
+ * You can easily play with the modal transition by editing
+ * these styles.
+ */
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+</style>
+
 </html>

@@ -89,7 +89,7 @@ class server1(object):
 
     def suggest(self, args):
         url = 'http://smartbox.gtimg.cn/s3/'
-        case = {'q': args['q'], 't': 'all', 'v':2}
+        case = {'q': args['q'], 't': 'all', 'v': 2}
         opener = request.build_opener()
         req = request.Request(url+'?'+parse.urlencode(case))
         datas = opener.open(req).read().decode('unicode-escape')
