@@ -17,6 +17,7 @@ class taskmgr(object):
         return server1().instantinfrom()
 
     def stocklist(self):
+	    print(2222)
         return server1().stocklist()
 
     def savestockinform(self):

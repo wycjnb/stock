@@ -19,5 +19,6 @@ def test():
 
 if __name__ == '__main__':
     urls.add_resource(api)
+	print(1111)
     server = gevent.wsgi.WSGIServer(('0.0.0.0', 80), app)
     server.serve_forever()
